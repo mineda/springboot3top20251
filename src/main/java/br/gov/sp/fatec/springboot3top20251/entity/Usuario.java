@@ -1,10 +1,18 @@
 package br.gov.sp.fatec.springboot3top20251.entity;
 
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,6 +29,16 @@ public class Usuario {
 
     @Column(name = "usr_senha")
     private String senha;
+
+    @ManyToMany
+    @JoinTable(name = "uau_usuario_autorizacao", 
+        joinColumns = {@JoinColumn(name = "usr_id")}, 
+        inverseJoinColumns = {@JoinColumn(name = "aut_id")})
+    private Set<Autorizacao> autorizacoes;
+
+    @OneToMany(mappedBy = "usuario")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Set<Anotacao> anotacoes;
 
     public Long getId() {
         return id;
@@ -44,6 +62,22 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public Set<Autorizacao> getAutorizacoes() {
+        return autorizacoes;
+    }
+
+    public void setAutorizacoes(Set<Autorizacao> autorizacoes) {
+        this.autorizacoes = autorizacoes;
+    }
+
+    public Set<Anotacao> getAnotacoes() {
+        return anotacoes;
+    }
+
+    public void setAnotacoes(Set<Anotacao> anotacoes) {
+        this.anotacoes = anotacoes;
     }
     
     
