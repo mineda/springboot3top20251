@@ -72,6 +72,40 @@ create table con_conteudo (
   primary key (con_id)
 );
 
+drop table if exists har_hardware cascade;
+create table har_hardware (
+  har_id bigint generated always as identity,
+  har_descricao varchar(100) not null,
+  har_data_hora_anuncio timestamp not null,
+  har_data_hora_lancamento timestamp,
+  primary key (har_id),
+  unique(har_descricao)
+);
+
+drop table if exists wis_wishlist cascade;
+create table wis_wishlist (
+  wis_id bigint generated always as identity,
+  wis_comentario varchar(100),
+  wis_data_hora_inclusao timestamp not null,
+  wis_nivel_interesse int not null,
+  wis_har_id bigint not null,
+  foreign key (wis_har_id) references har_hardware(har_id),
+  unique(wis_data_hora_inclusao, wis_har_id),
+  primary key (wis_id)
+);
+
+drop table if exists cot_cotacao cascade;
+create table cot_cotacao (
+  cot_id bigint generated always as identity,
+  cot_data_hora timestamp not null,
+  cot_valor float not null,
+  cot_precaucoes varchar(100),
+  cot_har_id bigint not null,
+  foreign key (cot_har_id) references har_hardware(har_id),
+  unique(cot_data_hora, cot_har_id),
+  primary key (cot_id)
+);
+
 insert into usr_usuario (usr_nome, usr_senha) 
   values ('admin', '$2a$10$i3.Z8Yv1Fwl0I5SNjdCGkOTRGQjGvHjh/gMZhdc3e7LIovAklqM6C');
 insert into aut_autorizacao (aut_nome) 
@@ -89,6 +123,15 @@ insert into rev_revisao (rev_conteudo, rev_data_hora, rev_tipo, rev_tra_id)
 insert into con_conteudo (con_texto, con_data_hora_criacao, con_data_hora_publicacao, con_tra_id)
   values ('Conteúdo do Teste 1', '2025-05-10 10:02', '2025-05-10 10:30', 1),
          ('Conteúdo do Teste 2', '2025-06-01 17:02', null, 2);
+insert into har_hardware (har_descricao, har_data_hora_anuncio, har_data_hora_lancamento)
+  values ('Novo Smartphone', '2025-01-01 09:00', '2025-02-01 10:00'),
+         ('Laptop Gamer', '2025-03-01 11:00', null);
+insert into wis_wishlist (wis_comentario, wis_data_hora_inclusao, wis_nivel_interesse, wis_har_id)
+  values ('Gostaria muito de ter esse smartphone', '2025-01-02 10:00', 5, 1),
+         ('Preciso de um laptop novo', '2025-03-02 12:00', 4, 2);
+insert into cot_cotacao (cot_data_hora, cot_valor, cot_precaucoes, cot_har_id)
+  values ('2025-01-03 10:00', 2999.99, 'Garantia de 2 anos', 1),
+         ('2025-03-03 12:00', 4999.99, 'Inclui acessórios', 2);
 
 --Comente essa linha se o usuario ja existir
 create user spring with password 'pass123';
