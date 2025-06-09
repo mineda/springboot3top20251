@@ -1,6 +1,5 @@
 package br.gov.sp.fatec.springboot3top20251.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +27,15 @@ public class TrabalhoService {
             trabalho.getGrupo().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Falta título ou grupo!");
         }
-        if(trabalho.getDataHoraEntrega() == null) {
-            trabalho.setDataHoraEntrega(LocalDateTime.now());
-        }
         return repo.save(trabalho);
     }
 
     public List<Trabalho> buscarPorTituloENota(String titulo, Integer nota) {
         return repo.buscarPorTituloENota(titulo, nota);
+    }
+
+    public Trabalho buscarPorId(Long id) {
+        return repo.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trabalho não encontrado"));
     }
 }

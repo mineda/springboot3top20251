@@ -39,7 +39,7 @@ drop table if exists tra_trabalho cascade;
 create table tra_trabalho (
   tra_id bigint generated always as identity,
   tra_titulo varchar(100) not null unique,
-  tra_data_hora_entrega timestamp not null,
+  tra_data_hora_entrega timestamp,
   tra_descricao varchar(200),
   tra_grupo varchar(20) not null,
   tra_nota int,
@@ -70,6 +70,18 @@ create table con_conteudo (
   foreign key (con_tra_id) references tra_trabalho(tra_id),
   unique(con_texto, con_tra_id),
   primary key (con_id)
+);
+
+drop table if exists ane_anexo cascade;
+create table ane_anexo (
+  ane_id bigint generated always as identity,
+  ane_texto varchar(200) not null,
+  ane_tipo varchar(10),
+  ane_data_hora timestamp not null,
+  ane_tra_id bigint not null,
+  foreign key (ane_tra_id) references tra_trabalho(tra_id),
+  unique(ane_texto, ane_tra_id),
+  primary key (ane_id)
 );
 
 drop table if exists har_hardware cascade;
@@ -116,13 +128,16 @@ insert into ant_anotacao(ant_texto, ant_data_hora, ant_usr_id)
   values('Meu novo projeto', '2023-08-01 19:10', 1);
 insert into tra_trabalho (tra_titulo, tra_data_hora_entrega, tra_grupo, tra_nota, tra_justificativa) 
   values ('Teste 1', '2025-05-10 10:00', 'Alpha', 6, 'Bom, mas falta conteúdo'),
-         ('Teste 2', '2025-06-01 17:00', 'Beta', null, 'Incompleto');
+         ('Teste 2', null, 'Beta', null, 'Incompleto');
 insert into rev_revisao (rev_conteudo, rev_data_hora, rev_tipo, rev_tra_id)
   values ('Revisão inicial do Teste 1', '2025-05-10 11:20', null, 1),
          ('Revisão final do Teste 1', '2025-05-12 17:00', 'FINAL', 1);
 insert into con_conteudo (con_texto, con_data_hora_criacao, con_data_hora_publicacao, con_tra_id)
   values ('Conteúdo do Teste 1', '2025-05-10 10:02', '2025-05-10 10:30', 1),
          ('Conteúdo do Teste 2', '2025-06-01 17:02', null, 2);
+insert into ane_anexo (ane_texto, ane_tipo, ane_data_hora, ane_tra_id)
+  values ('C corresponde à velocidade da luz', 'Glossário', '2025-05-10 10:05', 1),
+         ('O mar não é um bolachão', null, '2025-06-01 17:05', 2);
 insert into har_hardware (har_descricao, har_data_hora_anuncio, har_data_hora_lancamento)
   values ('Novo Smartphone', '2025-01-01 09:00', '2025-02-01 10:00'),
          ('Laptop Gamer', '2025-03-01 11:00', null);
